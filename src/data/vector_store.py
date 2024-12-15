@@ -2,7 +2,7 @@ from typing import List, Dict, Optional
 from pathlib import Path
 import faiss
 import numpy as np
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_community.embeddings import OpenAIEmbeddings
 from src.utils.config import OPENAI_API_KEY, VECTOR_STORE_PATH
 from src.core.document_processor import ProcessedDocument
 
