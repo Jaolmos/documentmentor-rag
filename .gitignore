@@ -1,0 +1,60 @@
+# Python virtual environment
+venv/
+env/
+
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+.project
+.pydevproject
+.settings/
+
+# Project specific
+data/processed/*
+data/vector_store/*
+!data/processed/.gitkeep
+!data/vector_store/.gitkeep
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+.log/
+logs/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/secrets.toml
