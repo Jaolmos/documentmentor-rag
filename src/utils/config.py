@@ -5,6 +5,11 @@ Configuration module for DocumentMentor
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -30,8 +35,26 @@ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 # Ensure necessary directories exist
 def create_directories():
     """Create necessary directories if they don't exist"""
-    VECTOR_STORE_PATH.mkdir(parents=True, exist_ok=True)
-    Path('data/processed').mkdir(parents=True, exist_ok=True)
+    try:
+        # Create base data directory first
+        Path('data').mkdir(exist_ok=True)
+        logger.info("Created data directory")
+        
+        # Then create subdirectories
+        VECTOR_STORE_PATH.mkdir(parents=True, exist_ok=True)
+        logger.info("Created vector store directory")
+        
+        Path('data/processed').mkdir(parents=True, exist_ok=True)
+        logger.info("Created processed directory")
+        
+    except Exception as e:
+        logger.error(f"Error creating directories: {e}")
+        raise
 
 # Create directories on module import
 create_directories()
+
+# Log configuration details
+logger.info(f"Database URL: {DATABASE_URL}")
+logger.info(f"Vector Store Path: {VECTOR_STORE_PATH}")
+logger.info(f"Debug Mode: {DEBUG}")
