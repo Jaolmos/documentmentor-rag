@@ -1,6 +1,8 @@
 from typing import List, Dict
-from langchain.chat_models import ChatOpenAI
-from langchain.memory import ConversationBufferMemory
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
 from src.utils.config import OPENAI_API_KEY
 from src.data.vector_store import VectorStore
 
@@ -14,15 +16,9 @@ class QAEngine:
             temperature=0.7,
             openai_api_key=OPENAI_API_KEY
         )
-        self.memory = ConversationBufferMemory()
         
-    def get_answer(self, question: str) -> dict:
-        relevant_chunks = self.vector_store.search(question)
-        context = "\n".join([chunk["chunk"] for chunk in relevant_chunks])
-        
-        conversation_history = self.memory.load_memory_variables({})
-        
-        prompt = f"""
+        # Define el prompt template usando el nuevo formato
+        self.prompt = ChatPromptTemplate.from_template("""
         You are a technical documentation assistant specialized in programming, software development, and computer science.
         Your task is to provide clear, accurate, and technical answers based on the provided documentation.
 
@@ -36,18 +32,29 @@ class QAEngine:
         Context:
         {context}
         
-        Conversation History:
-        {conversation_history}
-        
         Question: {question}
-        """
+        """)
         
-        response = self.llm.predict(prompt)
-        
-        self.memory.save_context(
-            {"input": question},
-            {"output": response}
+        # Configura la cadena RAG usando LCEL (LangChain Expression Language)
+        self.qa_chain = (
+            {
+                "context": lambda x: "\n".join([chunk["chunk"] for chunk in self.vector_store.search(x["question"])]),
+                "question": RunnablePassthrough()
+            }
+            | self.prompt 
+            | self.llm 
+            | StrOutputParser()
         )
+        
+    def get_answer(self, question: str) -> dict:
+        """
+        Get answer for a question using RAG (Retrieval Augmented Generation)
+        """
+        # Obtiene los chunks relevantes
+        relevant_chunks = self.vector_store.search(question)
+        
+        # Genera la respuesta usando la cadena RAG
+        response = self.qa_chain.invoke({"question": question})
         
         return {
             "answer": response,
