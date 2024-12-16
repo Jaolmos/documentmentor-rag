@@ -2,20 +2,22 @@ from typing import List, Dict, Optional
 from pathlib import Path
 import faiss
 import numpy as np
-from langchain_community.embeddings import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
+from langchain_core.embeddings import Embeddings
 from src.utils.config import OPENAI_API_KEY, VECTOR_STORE_PATH
 from src.core.document_processor import ProcessedDocument
 
 class VectorStore:
     """Manages document embeddings and semantic search using FAISS"""
     
-    def __init__(self):
-        self.embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+    def __init__(self, embeddings: Optional[Embeddings] = None):
+        self.embeddings = embeddings or OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
         self.index = None
         self.document_map: Dict[int, str] = {}
         self.current_id = 0
     
     def add_document(self, document: ProcessedDocument) -> None:
+        """Add a processed document to the vector store"""
         embeddings = []
         for chunk in document.chunks:
             vector = self.embeddings.embed_query(chunk)
@@ -35,6 +37,7 @@ class VectorStore:
         self.index.add(embeddings_array)
     
     def search(self, query: str, k: int = 3) -> List[dict]:
+        """Search for similar documents using semantic similarity"""
         query_vector = self.embeddings.embed_query(query)
         query_vector_array = np.array([query_vector], dtype='float32')
         
@@ -56,3 +59,7 @@ class VectorStore:
             })
             
         return results
+
+    async def asearch(self, query: str, k: int = 3) -> List[dict]:
+        """Async version of search method"""
+        return self.search(query, k)
