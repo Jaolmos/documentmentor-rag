@@ -6,6 +6,7 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_core.embeddings import Embeddings
 from src.utils.config import OPENAI_API_KEY, VECTOR_STORE_PATH
 from src.core.document_processor import ProcessedDocument
+import logging
 
 class VectorStore:
     """Manages document embeddings and semantic search using FAISS"""
@@ -38,27 +39,31 @@ class VectorStore:
     
     def search(self, query: str, k: int = 3) -> List[dict]:
         """Search for similar documents using semantic similarity"""
-        query_vector = self.embeddings.embed_query(query)
-        query_vector_array = np.array([query_vector], dtype='float32')
-        
         if self.index is None:
-            return []
-            
-        distances, indices = self.index.search(query_vector_array, k)
+            raise ValueError("No hay documentos indexados")
         
-        results = []
-        for idx, distance in zip(indices[0], distances[0]):
-            if idx < 0:
-                continue
-            doc_info = self.document_map[int(idx)]
-            results.append({
-                'doc_id': doc_info['doc_id'],
-                'title': doc_info['title'],
-                'chunk': doc_info['chunk'],
-                'score': float(1 / (1 + distance))
-            })
+        try:
+            query_vector = self.embeddings.embed_query(query)
+            query_vector_array = np.array([query_vector], dtype='float32')
             
-        return results
+            distances, indices = self.index.search(query_vector_array, k)
+            
+            results = []
+            for idx, distance in zip(indices[0], distances[0]):
+                if idx < 0:
+                    continue
+                doc_info = self.document_map[int(idx)]
+                results.append({
+                    'doc_id': doc_info['doc_id'],
+                    'title': doc_info['title'],
+                    'chunk': doc_info['chunk'],
+                    'score': float(1 / (1 + distance))
+                })
+            
+            return results
+        except Exception as e:
+            logging.error(f"Error en búsqueda vectorial: {e}")
+            raise
 
     async def asearch(self, query: str, k: int = 3) -> List[dict]:
         """Async version of search method"""
