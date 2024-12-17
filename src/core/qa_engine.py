@@ -1,10 +1,13 @@
-from typing import List, Dict
+import logging
+from typing import Dict
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from src.utils.config import OPENAI_API_KEY
 from src.data.vector_store import VectorStore
+
+logger = logging.getLogger(__name__)
 
 class QAEngine:
     """Handles document-based question answering with conversation memory"""
@@ -14,31 +17,33 @@ class QAEngine:
         self.llm = ChatOpenAI(
             model="gpt-3.5-turbo",
             temperature=0.7,
-            openai_api_key=OPENAI_API_KEY
+            openai_api_key=OPENAI_API_KEY,
+            request_timeout=60
         )
         
-        # Define el prompt template usando el nuevo formato
         self.prompt = ChatPromptTemplate.from_template("""
-        You are a technical documentation assistant specialized in programming, software development, and computer science.
-        Your task is to provide clear, accurate, and technical answers based on the provided documentation.
+        Eres un asistente técnico amigable que SIEMPRE responde en español. 
+        Tu personalidad es profesional pero cercana, y te gusta explicar las cosas 
+        de manera clara y con ejemplos cuando es posible.
 
-        Guidelines:
-        - If code is mentioned in the context, include it in the explanation
-        - Explain technical concepts clearly but maintain technical accuracy
-        - If something is not in the context, say so and don't make assumptions
-        - Use technical terminology appropriately
-        - If relevant, mention which part of the documentation the information comes from
+        Directrices:
+        - SIEMPRE responde en español
+        - Si se menciona código en el contexto, inclúyelo en la explicación
+        - Explica los conceptos técnicos de forma clara pero precisa
+        - Si algo no está en el contexto, dilo honestamente
+        - Usa terminología técnica apropiadamente
+        - Si es relevante, menciona qué parte de la documentación contiene la información
+        - Sé amigable y cercano, pero mantén la profesionalidad
 
-        Context:
+        Contexto:
         {context}
         
-        Question: {question}
+        Pregunta: {question}
         """)
         
-        # Configura la cadena RAG usando LCEL (LangChain Expression Language)
         self.qa_chain = (
             {
-                "context": lambda x: "\n".join([chunk["chunk"] for chunk in self.vector_store.search(x["question"])]),
+                "context": lambda x: self._get_context(x["question"]),
                 "question": RunnablePassthrough()
             }
             | self.prompt 
@@ -46,24 +51,36 @@ class QAEngine:
             | StrOutputParser()
         )
         
-    def get_answer(self, question: str) -> dict:
-        """
-        Get answer for a question using RAG (Retrieval Augmented Generation)
-        """
-        # Obtiene los chunks relevantes
-        relevant_chunks = self.vector_store.search(question)
+    def _get_context(self, question: str) -> str:
+        """Get context from vector store with error handling"""
+        try:
+            results = self.vector_store.search(question)
+            return "\n".join([chunk["chunk"] for chunk in results])
+        except Exception as e:
+            logger.error(f"Error getting context: {e}")
+            return ""
+
+    def get_answer(self, question: str) -> Dict[str, str]:
+        """Get answer with error handling and logging"""
+        try:
+            logger.info(f"Processing question: {question}")
+            answer = self.qa_chain.invoke({"question": question})
+            return {"answer": answer}
+        except Exception as e:
+            logger.error(f"Error getting answer: {e}")
+            return {
+                "error": "Lo siento, hubo un error procesando tu pregunta. Por favor, intenta de nuevo."
+            }
+
+    def get_initial_message(self) -> str:
+        """Returns the initial greeting message"""
+        return """¡Hola! 👋 Soy tu asistente técnico personal. 
         
-        # Genera la respuesta usando la cadena RAG
-        response = self.qa_chain.invoke({"question": question})
-        
-        return {
-            "answer": response,
-            "sources": [
-                {
-                    "title": chunk["title"],
-                    "content": chunk["chunk"][:200] + "..."
-                }
-                for chunk in relevant_chunks
-            ],
-            "confidence": relevant_chunks[0]["score"] if relevant_chunks else 0
-        }
+Estoy aquí para ayudarte a entender la documentación que subas. Puedes preguntarme cualquier cosa sobre los documentos y te responderé basándome en su contenido.
+
+Para empezar:
+1. Sube un documento PDF en el panel lateral
+2. Hazme preguntas sobre el contenido
+3. ¡Te ayudaré a entenderlo!
+
+¿En qué puedo ayudarte hoy?"""
