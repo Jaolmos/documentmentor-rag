@@ -9,14 +9,17 @@ class DocumentMentorUI:
     """Streamlit interface for DocumentMentor"""
     
     def __init__(self):
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
-            
         self.database = Database()
-        
         self.processor = DocumentProcessor()
         self.vector_store = VectorStore()
         self.qa_engine = QAEngine(self.vector_store)
+        
+        # Inicializar el estado de los mensajes con el saludo inicial
+        if "messages" not in st.session_state:
+            st.session_state.messages = [{
+                "role": "assistant",
+                "content": self.qa_engine.get_initial_message()
+            }]
 
     def display_chat(self):
         st.title("DocumentMentor")
