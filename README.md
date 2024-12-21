@@ -155,7 +155,7 @@ python -m venv venv
 3. Activar entorno virtual
 ```bash
 # Windows
-venv\Scriptsctivate
+venv\Scripts\activate
 # Linux/Mac
 source venv/bin/activate
 ```
