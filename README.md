@@ -1,4 +1,3 @@
-
 # DocumentMentor 📚
 
 ![DocumentMentor Interface](./images/screenshot.png)
@@ -6,6 +5,14 @@
 DocumentMentor es un sistema RAG (Retrieval Augmented Generation) que actúa como asistente de documentación técnica. Utilizando la arquitectura RAG, el sistema combina la potencia de GPT-3.5 de OpenAI con una base de conocimiento local para proporcionar respuestas precisas y contextualizadas sobre documentos técnicos en español.
 
 ## Tecnologías Principales 🛠️
+
+- **Python 3.10+**: Lenguaje base del proyecto
+  - Soporte para características modernas
+  - Gestión eficiente de dependencias
+  - Compatibilidad con frameworks de IA
+    - LangChain
+    - Sentence Transformers
+    - FAISS
 
 - **LangChain**: Framework principal para la construcción del sistema RAG
   - Integración con OpenAI GPT-3.5
@@ -22,7 +29,7 @@ DocumentMentor es un sistema RAG (Retrieval Augmented Generation) que actúa com
   - Embeddings locales con Sentence Transformers
   - Búsqueda semántica mediante FAISS
   - Recuperación contextual inteligente
-  - Ampliación de conocimiento del LLM
+  - Enriquecimiento del conocimiento del LLM
 
 ## Estructura del Proyecto 📁
 
@@ -53,7 +60,7 @@ documentmentor/
 ├── .env                         # Variables de entorno
 ├── .env.example                 # Ejemplo de configuración
 ├── .gitignore
-├── main.py                      # Punto de entrada
+├─��� main.py                      # Punto de entrada
 ├── README.md
 └── requirements.txt             # Dependencias
 ```
@@ -127,6 +134,9 @@ python-dotenv==1.0.1
 # Vector Store & Embeddings
 sentence-transformers==3.3.1
 faiss-cpu==1.9.0.post1
+torch==2.5.1
+torchvision==0.20.1
+torchaudio==2.5.1
 
 # Database
 SQLAlchemy==2.0.36
