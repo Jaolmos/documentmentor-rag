@@ -22,17 +22,28 @@ class DocumentMentorUI:
             }]
 
     def display_chat(self):
+        """Main chat display interface"""
         st.title("DocumentMentor")
         
         with st.sidebar:
+            # Initialize upload state
+            if "upload_state" not in st.session_state:
+                st.session_state.upload_state = False
+            
+            def handle_upload():
+                if st.session_state.uploaded_file is not None:
+                    st.session_state.upload_state = True
+            
             uploaded_file = st.file_uploader(
                 "Cargar documento PDF",
                 type=['pdf'],
-                label_visibility="collapsed"
+                label_visibility="collapsed",
+                key="uploaded_file",
+                on_change=handle_upload
             )
             
-            if uploaded_file:
-                with st.spinner("Procesando documento..."):
+            if uploaded_file and st.session_state.upload_state:
+                with st.spinner("Procesando..."):
                     try:
                         temp_path = Path("data/processed") / uploaded_file.name
                         temp_path.write_bytes(uploaded_file.getvalue())
@@ -47,8 +58,10 @@ class DocumentMentorUI:
                         
                         self.vector_store.add_document(doc)
                         st.success("Documento procesado correctamente")
+                        st.session_state.upload_state = False
                     except Exception as e:
-                        st.error(f"Error procesando documento: {e}")
+                        st.error(f"Error: {e}")
+                        st.session_state.upload_state = False
         
         # Chat interface
         for message in st.session_state.messages:
