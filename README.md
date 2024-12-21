@@ -22,7 +22,7 @@ DocumentMentor es un sistema RAG (Retrieval Augmented Generation) que actúa com
   - Embeddings locales con Sentence Transformers
   - Búsqueda semántica mediante FAISS
   - Recuperación contextual inteligente
-  - Aumentación de conocimiento del LLM
+  - Ampliación de conocimiento del LLM
 
 ## Estructura del Proyecto 📁
 
