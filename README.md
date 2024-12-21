@@ -142,7 +142,7 @@ pydantic==2.10.3
 
 1. Clonar el repositorio
 ```bash
-git clone https://github.com/tuusuario/documentmentor.git
+git clone https://github.com/Jaolmos/documentmentor-rag.git
 ```
 
 2. Crear entorno virtual
