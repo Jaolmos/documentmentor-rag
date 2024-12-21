@@ -76,11 +76,16 @@ class QAEngine:
         """Returns the initial greeting message"""
         return """¡Hola! 👋 Soy tu asistente técnico personal. 
         
-Estoy aquí para ayudarte a entender la documentación que subas. Puedes preguntarme cualquier cosa sobre los documentos y te responderé basándome en su contenido.
+Estoy aquí para ayudarte a entender documentación sobre desarrollo de software, bases de datos, frameworks, arquitectura de sistemas y tecnologías relacionadas.
+
+Características:
+- Memoria persistente: Consulto todos los documentos subidos anteriormente
+- Análisis contextual: Respuestas basadas en tu documentación
+- Ejemplos prácticos cuando sea posible
 
 Para empezar:
-1. Sube un documento PDF en el panel lateral
-2. Hazme preguntas sobre el contenido
+1. Sube un documento PDF técnico en el panel lateral
+2. Hazme preguntas sobre cualquier documento
 3. ¡Te ayudaré a entenderlo!
 
 ¿En qué puedo ayudarte hoy?"""
