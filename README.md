@@ -1,6 +1,8 @@
 
 # DocumentMentor 📚
 
+![DocumentMentor Interface](./images/screenshot.png)
+
 DocumentMentor es un sistema RAG (Retrieval Augmented Generation) que actúa como asistente de documentación técnica. Utilizando la arquitectura RAG, el sistema combina la potencia de GPT-3.5 de OpenAI con una base de conocimiento local para proporcionar respuestas precisas y contextualizadas sobre documentos técnicos en español.
 
 ## Tecnologías Principales 🛠️
