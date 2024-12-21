@@ -31,6 +31,32 @@ DocumentMentor es un sistema RAG (Retrieval Augmented Generation) que actúa com
   - Recuperación contextual inteligente
   - Enriquecimiento del conocimiento del LLM
 
+## Interface de Usuario con Streamlit 🖥️
+
+DocumentMentor utiliza Streamlit como framework para la interface de usuario, proporcionando:
+
+### Características de la UI
+- **Chat Interactivo**: 
+  - Interfaz conversacional fluida
+  - Historial de mensajes persistente
+  - Entrada de texto intuitiva
+
+- **Gestión de Documentos**:
+  - Carga de PDFs mediante drag & drop
+  - Visualización de documentos procesados
+  - Estado de procesamiento en tiempo real
+
+- **Panel de Control**:
+  - Sidebar para configuración
+  - Indicadores de estado del sistema
+  - Opciones de personalización
+
+### Ventajas de Streamlit
+- Desarrollo rápido y eficiente
+- Actualización en tiempo real
+- Integración perfecta con Python
+- Despliegue sencillo
+
 ## Estructura del Proyecto 📁
 
 ```
@@ -60,7 +86,7 @@ documentmentor/
 ├── .env                         # Variables de entorno
 ├── .env.example                 # Ejemplo de configuración
 ├── .gitignore
-├─��� main.py                      # Punto de entrada
+├── main.py                      # Punto de entrada
 ├── README.md
 └── requirements.txt             # Dependencias
 ```
