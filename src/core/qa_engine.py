@@ -76,7 +76,8 @@ class QAEngine:
         """Returns the initial greeting message"""
         return """¡Hola! 👋 Soy tu asistente técnico personal. 
         
-Estoy aquí para ayudarte a entender documentación sobre desarrollo de software, bases de datos, frameworks, arquitectura de sistemas y tecnologías relacionadas.
+Estoy aquí para ayudarte a entender documentación sobre desarrollo de software, inteligencia artificial, bases de datos, frameworks, arquitectura de sistemas y tecnologías relacionadas.
+
 
 Características:
 - Memoria persistente: Consulto todos los documentos subidos anteriormente
